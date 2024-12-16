@@ -1,0 +1,160 @@
+esphome:
+  name: floorheating
+
+external_components:
+  source:
+     type: local
+     path: ./components
+#  source:
+#    type: git
+#    url: https://github.com/grob6000/esphome-externalcomponents
+  
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+  
+# Enable logging
+logger:  
+  level: debug
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "f4K7F58j4XrZD2fpbKKVAYsEZ9gQDSxfK5p22uUalMU="
+  reboot_timeout: 0s
+
+web_server:
+  port: 80
+  version: 2
+  ota: true
+
+ota:
+  - platform: esphome
+    password: "4cbd47eb6b75831a2469050269422786"
+
+
+wifi:
+  networks:
+  - ssid: !secret wifi_ssid
+    password: !secret wifi_password
+    manual_ip:
+      static_ip: 192.168.1.233
+      gateway: 192.168.0.1
+      subnet: 255.255.253.0
+  fast_connect: true
+
+sensor:
+  - platform: uptime
+    name: Solis Inverter ESPHome Uptime
+    update_interval: 60s
+  - platform: wifi_signal
+    name: Solis Inverter ESPHome Wifi Signal
+    update_interval: 60s
+
+  - platform: homeassistant
+    id: "ha_temp_huiskamer"
+    entity_id: sensor.shellyhtg3_dcda0cb79088_temperature
+  - platform: homeassistant
+    id: "ha_temp_garage"
+    entity_id: sensor.shellyplusht_e465b85f7c6c_temperature
+  - platform: homeassistant
+    id: "ha_temp_kantoor"
+    entity_id: sensor.shellyplusht_a0a3b3de5294_temperature
+  - platform: homeassistant
+    id: "ha_temp_keuken"
+    entity_id: sensor.shellyplusht_e465b85f5404_temperature
+
+climate:
+  - platform: floorheating_climate
+    name: fh_climate_huiskamer
+    sensor: ha_temp_huiskamer
+    zone_6: true
+    zone_7: true
+    zone_8: true
+    zone_9: true
+    zone_10: true
+
+  - platform: floorheating_climate
+    name: fh_climate_keuken
+    sensor: ha_temp_keuken
+    zone_4: true
+    zone_5: true    
+
+  - platform: floorheating_climate
+    name: fh_climate_kantoor
+    sensor: ha_temp_kantoor
+    zone_3: true
+
+  - platform: floorheating_climate
+    name: fh_climate_garage
+    sensor: ha_temp_garage
+    zone_1: true
+    zone_2: true   
+
+
+uart:
+  id: uart_bus
+  rx_pin: GPIO16
+  tx_pin: GPIO17
+  baud_rate: 115200
+  rx_buffer_size: 1000
+#  debug:
+#    direction: BOTH
+#    dummy_receiver: true
+#    after:
+#      delimiter: "\n"
+#    sequence: 
+#      - lambda: |-          
+#          UARTDebug::log_string(direction, bytes);       
+ 
+floorheating_component:
+  id: fh1
+  uart_id: uart_bus
+  update_interval: 5s #60
+  temp_zone_1:
+    name: "Zone 01 temperatuur"
+  temp_zone_2:
+    name: "Zone 02 temperatuur"
+  temp_zone_3:
+    name: "Zone 03 temperatuur"
+  temp_zone_4:
+    name: "Zone 04 temperatuur"
+  temp_zone_5:
+    name: "Zone 05 temperatuur"
+  temp_zone_6:
+    name: "Zone 06 temperatuur"
+  temp_zone_7:
+    name: "Zone 07 temperatuur"
+  temp_zone_8:
+    name: "Zone 08 temperatuur"
+  temp_zone_9:
+    name: "Zone 09 temperatuur"
+  temp_zone_10:
+    name: "Zone 10 temperatuur"
+  
+  switch_zone_1:
+    name: "Zone 01 switch"    
+  switch_zone_2:
+    name: "Zone 02 switch"    
+  switch_zone_3:
+    name: "Zone 03 switch"    
+  switch_zone_4:
+    name: "Zone 04 switch"    
+  switch_zone_5:
+    name: "Zone 05 switch"    
+  switch_zone_6:
+    name: "Zone 06 switch"    
+  switch_zone_7:
+    name: "Zone 07 switch"    
+  switch_zone_8:
+    name: "Zone 08 switch"    
+  switch_zone_9:
+    name: "Zone 09 switch"    
+  switch_zone_10:
+    name: "Zone 10 switch"    
+
+#switch:
+#  - platform: floorheating_switch
+#    name: switch_zone_1
+#    zone: 1
