@@ -22,7 +22,7 @@ logger:
 api:
   encryption:
     key: "f4K7F58j4XrZD2fpbKKVAYsEZ9gQDSxfK5p22uUalMU="
-  reboot_timeout: 0s
+#  reboot_timeout: 0s
 
 web_server:
   port: 80
@@ -46,10 +46,10 @@ wifi:
 
 sensor:
   - platform: uptime
-    name: Solis Inverter ESPHome Uptime
+    name: Floorheater ESPHome Uptime
     update_interval: 60s
   - platform: wifi_signal
-    name: Solis Inverter ESPHome Wifi Signal
+    name: Floorheater ESPHome Wifi Signal
     update_interval: 60s
 
   - platform: homeassistant
@@ -67,8 +67,10 @@ sensor:
 
 climate:
   - platform: floorheating_climate
-    name: fh_climate_huiskamer
+    name: Huiskamer
+    floorheating_component: fh1
     sensor: ha_temp_huiskamer
+    zone_1: true
     zone_6: true
     zone_7: true
     zone_8: true
@@ -76,22 +78,24 @@ climate:
     zone_10: true
 
   - platform: floorheating_climate
-    name: fh_climate_keuken
+    name: Keuken
+    floorheating_component: fh1
     sensor: ha_temp_keuken
     zone_4: true
     zone_5: true    
 
   - platform: floorheating_climate
-    name: fh_climate_kantoor
+    name: Kantoor
+    floorheating_component: fh1
     sensor: ha_temp_kantoor
     zone_3: true
 
   - platform: floorheating_climate
-    name: fh_climate_garage
+    name: Garage
+    floorheating_component: fh1
     sensor: ha_temp_garage
     zone_1: true
     zone_2: true   
-
 
 uart:
   id: uart_bus
@@ -132,7 +136,11 @@ floorheating_component:
     name: "Zone 09 temperatuur"
   temp_zone_10:
     name: "Zone 10 temperatuur"
-  
+  temp_zone_11:
+    name: "Zone 11 temperatuur"
+  temp_zone_12:
+    name: "Zone 12 temperatuur"
+
   switch_zone_1:
     name: "Zone 01 switch"    
   switch_zone_2:
@@ -153,8 +161,18 @@ floorheating_component:
     name: "Zone 09 switch"    
   switch_zone_10:
     name: "Zone 10 switch"    
+  switch_zone_11:
+    name: "Zone 11 switch"    
+  switch_zone_12:
+    name: "Zone 12 switch"    
 
-#switch:
-#  - platform: floorheating_switch
-#    name: switch_zone_1
-#    zone: 1
+switch:
+  - platform: floorheating_switch
+    name: switch_zone_11
+    floorheating_component: fh1
+    zone: 11
+  - platform: floorheating_switch
+    floorheating_component: fh1
+    name: switch_zone_12
+    zone: 12
+
