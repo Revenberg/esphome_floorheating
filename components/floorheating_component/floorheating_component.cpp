@@ -13,22 +13,22 @@ namespace esphome
 
     static const char *TAG = "floorheating";
 
-    unsigned long previousMillis = 0;
-
     void FloorheatingComponent::setup()
     {
+      previousMillis = 0;
+      previousSendMillis = 0;
     }
 
     void FloorheatingComponent::loop()
     {
+      char sendMessage[sendMessage_BUFFER_LEN];
+
       while (this->available())
       {
         char incomingChar = this->read();
 
         if (incomingChar == '\n')
         { // Check if the user pressed Enter (new line character)
-
-          ESP_LOGD(TAG, "message received=%s", receivedMessage.c_str());
 
           DynamicJsonDocument doc(1000);
 
@@ -46,6 +46,8 @@ namespace esphome
             const char *name = doc["name"].as<const char *>();
             if (strcmp(component_type, "TEMPERATURE_COMPONENT") == 0)
             {
+              // ESP_LOGD(TAG, "message temp received=%s", receivedMessage.c_str());
+
               float v = doc["temp"].as<const float>();
               if ((strcmp(name, "zone_1") == 0) && (this->tempzone1sensor != nullptr))
               {
@@ -99,6 +101,8 @@ namespace esphome
 
             if (strcmp(component_type, "SWITCH_COMPONENT") == 0)
             {
+              // ESP_LOGD(TAG, "message SWITCH received=%s", receivedMessage.c_str());
+
               int v = doc["switch"].as<const int>();
               if ((strcmp(name, "zone_1") == 0) && (this->switchzone1sensor != nullptr))
               {
@@ -159,126 +163,81 @@ namespace esphome
           receivedMessage += incomingChar;
         }
       }
-
-      if (millis() - previousMillis >= 5000)
-      {
-        char sendMessage[sendMessage_BUFFER_LEN];
+      
+      if (millis() - previousMillis >= 1000)
+      {        
         previousMillis = millis();
-
-        ESP_LOGD(TAG, "internal_zone_1=%d, %d", this->switchzone1sensor->state, internal_zone_1);
-
-        if (this->switchzone1sensor != nullptr)
+        counter--;
+        if (counter <= 0)
         {
-          if (this->switchzone1sensor->state != internal_zone_1)
-          {
-            sprintf(sendMessage, "{\"msgType\":1,\"component_type\":2, \"component_id\":1, \"component_value\":%d}\n", internal_zone_1);
-            this->write_str(sendMessage);
-            this->flush();
-            ESP_LOGD(TAG, "sendMessage=%s", sendMessage);
-          }
-        }
-        if (this->switchzone2sensor != nullptr)
+          counter = 12;
+          resend = millis() - previousSendMillis >= 60000;
+          previousSendMillis = millis();
+        }        
+        switch (counter)
         {
-          if (this->switchzone2sensor->state != internal_zone_2)
-          {
-            sprintf(sendMessage, "{\"msgType\":1,\"component_type\":2, \"component_id\":2, \"component_value\":%d}\n", internal_zone_2);
-            this->write_str(sendMessage);
-            this->flush();
-          }
-        }
-        if (this->switchzone3sensor != nullptr)
-        {
-          if (this->switchzone3sensor->state != internal_zone_3)
-          {
-            sprintf(sendMessage, "{\"msgType\":1,\"component_type\":2, \"component_id\":3, \"component_value\":%d}\n", internal_zone_3);
-            this->write_str(sendMessage);
-            this->flush();
-          }
-        }
-        if (this->switchzone4sensor != nullptr)
-        {
-          if (this->switchzone4sensor->state != internal_zone_4)
-          {
-            sprintf(sendMessage, "{\"msgType\":1,\"component_type\":2, \"component_id\":4, \"component_value\":%d}\n", internal_zone_4);
-            this->write_str(sendMessage);
-            this->flush();
-          }
-        }
-        if (this->switchzone5sensor != nullptr)
-        {
-          if (this->switchzone5sensor->state != internal_zone_5)
-          {
-            sprintf(sendMessage, "{\"msgType\":1,\"component_type\":2, \"component_id\":5, \"component_value\":%d}\n", internal_zone_5);
-            this->write_str(sendMessage);
-            this->flush();
-          }
-        }
-        if (this->switchzone6sensor != nullptr)
-        {
-          if (this->switchzone6sensor->state != internal_zone_6)
-          {
-            sprintf(sendMessage, "{\"msgType\":1,\"component_type\":2, \"component_id\":6, \"component_value\":%d}\n", internal_zone_6);
-            this->write_str(sendMessage);
-            this->flush();
-          }
-        }
-        if (this->switchzone7sensor != nullptr)
-        {
-          if (this->switchzone7sensor->state != internal_zone_7)
-          {
-            sprintf(sendMessage, "{\"msgType\":1,\"component_type\":2, \"component_id\":7, \"component_value\":%d}\n", internal_zone_7);
-            this->write_str(sendMessage);
-            this->flush();
-          }
-        }
-        if (this->switchzone8sensor != nullptr)
-        {
-          if (this->switchzone8sensor->state != internal_zone_8)
-          {
-            sprintf(sendMessage, "{\"msgType\":1,\"component_type\":2, \"component_id\":8, \"component_value\":%d}\n", internal_zone_8);
-            this->write_str(sendMessage);
-            this->flush();
-          }
-        }
-        if (this->switchzone9sensor != nullptr)
-        {
-          if (this->switchzone9sensor->state != internal_zone_9)
-          {
-            sprintf(sendMessage, "{\"msgType\":1,\"component_type\":2, \"component_id\":9, \"component_value\":%d}\n", internal_zone_9);
-            this->write_str(sendMessage);
-            this->flush();
-          }
-        }
-        if (this->switchzone10sensor != nullptr)
-        {
-          if (this->switchzone10sensor->state != internal_zone_10)
-          {
-            sprintf(sendMessage, "{\"msgType\":1,\"component_type\":2, \"component_id\":10, \"component_value\":%d}\n", internal_zone_10);
-            this->write_str(sendMessage);
-            this->flush();
-          }
-        }
-        if (this->switchzone11sensor != nullptr)
-        {
-          if (this->switchzone11sensor->state != internal_zone_11)
-          {
-            sprintf(sendMessage, "{\"msgType\":1,\"component_type\":2, \"component_id\":11, \"component_value\":%d}\n", internal_zone_11);
-            this->write_str(sendMessage);
-            this->flush();
-          }
-        }
-        if (this->switchzone12sensor != nullptr)
-        {
-          if (this->switchzone12sensor->state != internal_zone_12)
-          {
-            sprintf(sendMessage, "{\"msgType\":1,\"component_type\":2, \"component_id\":12, \"component_value\":%d}\n", internal_zone_12);
-            this->write_str(sendMessage);
-            this->flush();
-          }
+        case 1:
+          if (this->switchzone1sensor != nullptr)
+            FloorheatingComponent::writeToSerial(resend, counter, this->switchzone1sensor, internal_zone_1);
+          break;
+        case 2:
+          if (this->switchzone2sensor != nullptr)
+            FloorheatingComponent::writeToSerial(resend, counter, this->switchzone2sensor, internal_zone_2);
+          break;
+        case 3:
+          if (this->switchzone3sensor != nullptr)
+            FloorheatingComponent::writeToSerial(resend, counter, this->switchzone3sensor, internal_zone_3);
+          break;
+        case 4:
+          if (this->switchzone4sensor != nullptr)
+            FloorheatingComponent::writeToSerial(resend, counter, this->switchzone4sensor, internal_zone_4);
+          break;
+        case 5:
+          if (this->switchzone5sensor != nullptr)
+            FloorheatingComponent::writeToSerial(resend, counter, this->switchzone5sensor, internal_zone_5);
+          break;
+        case 6:
+          if (this->switchzone6sensor != nullptr)
+            FloorheatingComponent::writeToSerial(resend, counter, this->switchzone6sensor, internal_zone_6);
+          break;
+        case 7:
+          if (this->switchzone7sensor != nullptr)
+            FloorheatingComponent::writeToSerial(resend, counter, this->switchzone7sensor, internal_zone_7);
+          break;
+        case 8:
+          if (this->switchzone8sensor != nullptr)
+            FloorheatingComponent::writeToSerial(resend, counter, this->switchzone8sensor, internal_zone_8);
+          break;
+        case 9:
+          if (this->switchzone9sensor != nullptr)
+            FloorheatingComponent::writeToSerial(resend, counter, this->switchzone9sensor, internal_zone_9);
+          break;
+        case 10:
+          if (this->switchzone10sensor != nullptr)
+            FloorheatingComponent::writeToSerial(resend, counter, this->switchzone10sensor, internal_zone_10);
+          break;
+        case 11:
+          if (this->switchzone11sensor != nullptr)
+            FloorheatingComponent::writeToSerial(resend, counter, this->switchzone11sensor, internal_zone_11);
+          break;
+        case 12:
+          if (this->switchzone12sensor != nullptr)
+            FloorheatingComponent::writeToSerial(resend, counter, this->switchzone12sensor, internal_zone_12);
+          break;
         }
       }
     }
 
+    void FloorheatingComponent::writeToSerial(bool resend, unsigned long component_id, binary_sensor::BinarySensor *switchzonesensor, bool status)
+    {      
+      if ((switchzonesensor->state != status) || (resend))
+      {
+        char sendMessage[sendMessage_BUFFER_LEN];
+        sprintf(sendMessage, "{\"msgType\":1,\"component_type\":2, \"component_id\":%d, \"component_value\":%d}\n", component_id, status);
+        this->write_str(sendMessage);
+        this->flush();
+      }
+    }
     void FloorheatingComponent::update()
     {
     }

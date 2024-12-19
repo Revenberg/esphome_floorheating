@@ -20,6 +20,7 @@ namespace esphome
       void update() override;
       void dump_config() override;
       bool set_output(uint16_t zone, bool state);
+      void writeToSerial(bool resend, unsigned long component_id, binary_sensor::BinarySensor *switchzonesensor, bool status);
 
       void set_temp_zone_1_sensor(sensor::Sensor *s) { tempzone1sensor = s; }
       void set_temp_zone_2_sensor(sensor::Sensor *s) { tempzone2sensor = s; }
@@ -45,7 +46,7 @@ namespace esphome
       void set_switch_zone_9_sensor(binary_sensor::BinarySensor *s) { switchzone9sensor = s; }
       void set_switch_zone_10_sensor(binary_sensor::BinarySensor *s) { switchzone10sensor = s; }
       void set_switch_zone_11_sensor(binary_sensor::BinarySensor *s) { switchzone11sensor = s; }
-      void set_switch_zone_12_sensor(binary_sensor::BinarySensor *s) { switchzone12sensor = s; }
+      void set_switch_zone_12_sensor(binary_sensor::BinarySensor *s) { switchzone12sensor = s; }     
 
     protected:
       sensor::Sensor *tempzone1sensor;
@@ -87,6 +88,11 @@ namespace esphome
       bool internal_zone_10 = false;
       bool internal_zone_11 = false;
       bool internal_zone_12 = false;
+
+      unsigned long previousMillis = 0;
+      int counter = 0;
+      bool resend = true;
+      unsigned long previousSendMillis = 0;
     };
 
   } // namespace floorheatingcomponent
