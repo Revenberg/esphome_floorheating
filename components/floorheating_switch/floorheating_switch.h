@@ -14,12 +14,13 @@ class FloorheatingSwitch : public switch_::Switch, public Component {
   void dump_config() override;
   
   float get_setup_priority() const { return setup_priority::HARDWARE; }
+  void set_floorheatingcomponent(floorheatingcomponent::FloorheatingComponent *fh) { this->parent = fh; }
   void set_zone(uint16_t zone) { zone_ = zone; }  
 
  protected:
   uint16_t zone_{0};
 
-  floorheatingcomponent::FloorheatingComponent* parent;
+  floorheatingcomponent::FloorheatingComponent *parent{nullptr};
 };
 
 } //namespace floorheating_switch

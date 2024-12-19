@@ -1,10 +1,11 @@
 import voluptuous as vol
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import climate, sensor, switch
+from esphome.components import climate, sensor, switch, floorheating_component
 from esphome.const import CONF_ID, CONF_SENSOR
 
-AUTO_LOAD = ["climate", "sensor", "binary_sensor"]
+CONF_FH = "floorheating_component"
+AUTO_LOAD = ["climate", "sensor", "binary_sensor", "floorheating_component"]
 
 floorheating_climate_ns = cg.esphome_ns.namespace("floorheating_climate")
 FloorheatingClimate = floorheating_climate_ns.class_("FloorheatingClimate", climate.Climate, switch.Switch, cg.Component)
@@ -26,6 +27,7 @@ CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend(
     {
         cv.GenerateID(): cv.declare_id(FloorheatingClimate),   
         cv.Required(CONF_SENSOR): cv.use_id(sensor.Sensor),    
+        cv.Required(CONF_FH): cv.use_id(floorheating_component.FloorheatingComponent),    
         cv.Optional(CONF_ZONE_1, default='false'): cv.boolean,
         cv.Optional(CONF_ZONE_2, default='false'): cv.boolean,
         cv.Optional(CONF_ZONE_3, default='false'): cv.boolean,
@@ -50,28 +52,31 @@ async def to_code(config):
     sens = await cg.get_variable(config[CONF_SENSOR])
     cg.add(var.set_sensor(sens))
 
+    fh = await cg.get_variable(config[CONF_FH])
+    cg.add(var.set_floorheatingcomponent(fh))
+
     if CONF_ZONE_1 in config:        
         cg.add(var.set_zones(1, config[CONF_ZONE_1]))
     if CONF_ZONE_2 in config:        
         cg.add(var.set_zones(2, config[CONF_ZONE_2]))
     if CONF_ZONE_3 in config:        
-        cg.add(var.set_zones(3, config[CONF_ZONE_1]))
+        cg.add(var.set_zones(3, config[CONF_ZONE_3]))
     if CONF_ZONE_4 in config:        
-        cg.add(var.set_zones(4, config[CONF_ZONE_1]))
+        cg.add(var.set_zones(4, config[CONF_ZONE_4]))
     if CONF_ZONE_5 in config:        
-        cg.add(var.set_zones(5, config[CONF_ZONE_1]))
+        cg.add(var.set_zones(5, config[CONF_ZONE_5]))
     if CONF_ZONE_6 in config:        
-        cg.add(var.set_zones(6, config[CONF_ZONE_1]))
+        cg.add(var.set_zones(6, config[CONF_ZONE_6]))
     if CONF_ZONE_7 in config:        
-        cg.add(var.set_zones(7, config[CONF_ZONE_1]))
+        cg.add(var.set_zones(7, config[CONF_ZONE_7]))
     if CONF_ZONE_8 in config:        
-        cg.add(var.set_zones(8, config[CONF_ZONE_1]))
+        cg.add(var.set_zones(8, config[CONF_ZONE_8]))
     if CONF_ZONE_9 in config:        
-        cg.add(var.set_zones(9, config[CONF_ZONE_1]))
+        cg.add(var.set_zones(9, config[CONF_ZONE_9]))
     if CONF_ZONE_10 in config:        
-        cg.add(var.set_zones(10, config[CONF_ZONE_1]))
+        cg.add(var.set_zones(10, config[CONF_ZONE_10]))
     if CONF_ZONE_11 in config:        
-        cg.add(var.set_zones(11, config[CONF_ZONE_1]))
+        cg.add(var.set_zones(11, config[CONF_ZONE_11]))
     if CONF_ZONE_12 in config:        
-        cg.add(var.set_zones(12, config[CONF_ZONE_1]))
+        cg.add(var.set_zones(12, config[CONF_ZONE_12]))
     

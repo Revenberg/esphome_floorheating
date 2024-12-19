@@ -28,22 +28,15 @@ namespace esphome
             void init();
             esphome::climate::ClimateTraits traits() override;
             void set_sensor(sensor::Sensor *sensor) { this->sensor_ = sensor; }
+            void set_floorheatingcomponent(floorheatingcomponent::FloorheatingComponent *fh) { this->parent = fh; }
 
             void processUpdate(float temp);
             void publishUpdate();
             void set_zones(int zone, bool status);
-            void update_zone(bool state);
+            void update_zone(uint16_t state);
 
         private:
             int errCounter = 0;
-
-        protected:
-            int status = 0;
-            float target_temperature_ = 0;
-            unsigned long connectionStart = 0;
-            unsigned long previousMillis = 0;
-            const long interval = 60000;
-            sensor::Sensor *sensor_{nullptr};
             bool zone1 = false;
             bool zone2 = false;
             bool zone3 = false;
@@ -56,8 +49,15 @@ namespace esphome
             bool zone10 = false;
             bool zone11 = false;
             bool zone12 = false;
+        protected:
+            int status = 0;
+            float target_temperature_ = 0;
+            unsigned long connectionStart = 0;
+            unsigned long previousMillis = 0;
+            const long interval = 60000;
+            sensor::Sensor *sensor_{nullptr};            
 
-            floorheatingcomponent::FloorheatingComponent* parent;
+            floorheatingcomponent::FloorheatingComponent *parent{nullptr};
         };
     }
 }
