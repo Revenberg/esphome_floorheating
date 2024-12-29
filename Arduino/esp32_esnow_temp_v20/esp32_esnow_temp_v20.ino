@@ -61,6 +61,8 @@ void setup() {
     doc["interval"] = send_interval;
     storeConfig(doc);
   }
+  doc["interval"] = send_interval;
+  storeConfig(doc);
 
   devices = doc.createNestedObject("devices");
 

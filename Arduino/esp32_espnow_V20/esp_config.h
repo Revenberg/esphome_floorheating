@@ -173,6 +173,7 @@ JsonDocument readConfig() {
   Serial.println("readFileJSON");
   JsonDocument doc;
   doc = readFileJSON(SPIFFS, "/config.json");    
+  Serial.print("Read from file: "); 
   serializeJson(doc, Serial);  
   Serial.println();
   return doc;
@@ -192,6 +193,7 @@ void storeConfig(JsonDocument doc) {
 
 void removeConfig() {
   deleteFile(SPIFFS, "/config.json");
+  ESP.restart();
 }
 
 void store1() {

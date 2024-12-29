@@ -12,7 +12,7 @@
 #include <ArduinoJson.h>
 
 static bool DEBUG_SENDER = true;
-long send_interval = 5000;
+long send_interval = 30000;
 unsigned long ResetEventTime = 100000;
 
 static unsigned long lastEventTime = millis();

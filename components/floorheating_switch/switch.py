@@ -18,7 +18,7 @@ CONF_ZONE = "zone"
 CONFIG_SCHEMA = switch.SWITCH_SCHEMA.extend({
     cv.GenerateID(): cv.declare_id(FloorheatingSwitch),
     cv.Required(CONF_FH): cv.use_id(floorheating_component.FloorheatingComponent),    
-    cv.Required(CONF_ZONE): vol.All(cv.uint16_t, vol.Range(min=0, max=15)),    
+    cv.Required(CONF_ZONE): vol.All(cv.uint16_t, vol.Range(min=0, max=12)),    
     
 }).extend(cv.COMPONENT_SCHEMA)
 

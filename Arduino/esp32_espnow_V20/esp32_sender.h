@@ -112,8 +112,9 @@ void dataToSend(int switchIndex, int switchValue) {
           outgoingSetpoints.component_id = value["component_id"].as<const uint64_t>();
           outgoingSetpoints.component_value = switchValue;
           outgoingSetpoints.readingId = readingIdCounter++;
+          Serial.print("SWITCH_COMPONENT send: "); 
           serializeJson(doc, Serial);        
-          Serial.println("<<--");
+          Serial.println();
           esp_now_send(NULL, (uint8_t *)&outgoingSetpoints, sizeof(outgoingSetpoints));
         }
       }
@@ -228,7 +229,10 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *incomingData, int len) {
         sprintf(serialAddres, "zone_%d", index);
         device["name"] = serialAddres;
         storeConfig(doc);
+
+        Serial.print("Store new device: "); 
         serializeJson(doc, Serial);        
+        Serial.println();      
       }
 
       // Send message over UART
@@ -239,11 +243,9 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *incomingData, int len) {
         serializeJson(root, payload);
         events.send(payload.c_str(), "new_readings", millis());
 
-        /*
         Serial.println(payload.c_str());
         mySerial.print(payload.c_str());
-        mySerial.print("\n");
-        */
+        mySerial.print("\n");        
 
         switch (root["index"].as<const uint8_t>()) {
           case 1:
@@ -291,12 +293,10 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *incomingData, int len) {
         serializeJson(root, payload);
         events.send(payload.c_str(), "new_readings", millis());
 
-        /*
         Serial.println(payload.c_str());
         mySerial.print(payload.c_str());
         mySerial.print("\n");
-        */
-
+        
         switch (root["index"].as<const uint8_t>()) {
           case 1:
             button1.update((int)incomingReadings.component_value == 1);
@@ -361,30 +361,12 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *incomingData, int len) {
       root["esp32ComponentCount"] = pairingData.esp32ComponentCount;
 
       if (pairingData.id != 0) {  // do not replay to server itself
-        //Serial.print("pairingData.msgType: ");
-        //Serial.print(PAIRING);
-        //Serial.print(" : ");
-        //Serial.println(pairingData.msgType);
         if (pairingData.msgType == PAIRING) {
           for (int i = 0; i < pairingData.esp32ComponentCount; i++) {
             componentCount++;
 
             root["esp32Component"][i]["component_type"] = pairingData.esp32ComponentArray[i].component_type;
             root["esp32Component"][i]["component_id"] = pairingData.esp32ComponentArray[i].component_count;
-
-            /*if (pairingData.esp32ComponentArray[i].component_type == TEMPERATURE_COMPONENT) {
-              Serial.print("TEMPERATURE_COMPONENT: ");
-              Serial.println(pairingData.esp32ComponentArray[i].component_count);
-            }
-            if (pairingData.esp32ComponentArray[i].component_type == HUMIDITY_COMPONENT) {
-              Serial.print("HUMIDITY_COMPONENT: ");
-              Serial.println(pairingData.esp32ComponentArray[i].component_count);
-            }
-            if (pairingData.esp32ComponentArray[i].component_type == SWITCH_COMPONENT) {
-              Serial.print("SWITCH_COMPONENT: ");
-              Serial.println(pairingData.esp32ComponentArray[i].component_count);
-            }
-            */
           }
 
           pairingData.id = 0;  // 0 is server
@@ -397,10 +379,10 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *incomingData, int len) {
           //serializeJson(root, Serial);
           //Serial.println();
 
-          mySerial.println(payload.c_str());
+          /*mySerial.println(payload.c_str());
           Serial.println("Send mySerial: ");
           Serial.println(payload.c_str());
-
+          */
           addPeer(clientMacAddress);
 
           esp_err_t result = esp_now_send(clientMacAddress, (uint8_t *)&pairingData, sizeof(pairingData));

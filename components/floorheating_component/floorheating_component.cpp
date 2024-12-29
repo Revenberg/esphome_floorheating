@@ -41,12 +41,15 @@ namespace esphome
           }
 
           if (doc.containsKey("component_type"))
-          {
-            const char *component_type = doc["component_type"].as<const char *>();
+          {           
+            const char *component_type = doc["component_type"].as<const char *>();                        
             const char *name = doc["name"].as<const char *>();
+
+            ESP_LOGD(TAG, "component_type=%s, name%s", component_type, name);
+            
             if (strcmp(component_type, "TEMPERATURE_COMPONENT") == 0)
             {
-              // ESP_LOGD(TAG, "message temp received=%s", receivedMessage.c_str());
+              ESP_LOGD(TAG, "message temp received=%s", receivedMessage.c_str());
 
               float v = doc["temp"].as<const float>();
               if ((strcmp(name, "zone_1") == 0) && (this->tempzone1sensor != nullptr))
@@ -89,19 +92,19 @@ namespace esphome
               {
                 this->tempzone10sensor->publish_state((float)v);
               }
-              if ((strcmp(name, "zone_11") == 0) && (this->tempzone10sensor != nullptr))
+              if ((strcmp(name, "zone_11") == 0) && (this->tempzone11sensor != nullptr))
               {
-                this->tempzone10sensor->publish_state((float)v);
+                this->tempzone11sensor->publish_state((float)v);
               }
-              if ((strcmp(name, "zone_12") == 0) && (this->tempzone10sensor != nullptr))
+              if ((strcmp(name, "zone_12") == 0) && (this->tempzone12sensor != nullptr))
               {
-                this->tempzone10sensor->publish_state((float)v);
+                this->tempzone12sensor->publish_state((float)v);
               }
             }
 
             if (strcmp(component_type, "SWITCH_COMPONENT") == 0)
             {
-              // ESP_LOGD(TAG, "message SWITCH received=%s", receivedMessage.c_str());
+              ESP_LOGD(TAG, "message SWITCH received=%s", receivedMessage.c_str());
 
               int v = doc["switch"].as<const int>();
               if ((strcmp(name, "zone_1") == 0) && (this->switchzone1sensor != nullptr))
@@ -144,13 +147,13 @@ namespace esphome
               {
                 this->switchzone10sensor->publish_state(v);
               }
-              if ((strcmp(name, "zone_11") == 0) && (this->switchzone10sensor != nullptr))
+              if ((strcmp(name, "zone_11") == 0) && (this->switchzone11sensor != nullptr))
               {
-                this->switchzone10sensor->publish_state(v);
+                this->switchzone11sensor->publish_state(v);
               }
-              if ((strcmp(name, "zone_12") == 0) && (this->switchzone10sensor != nullptr))
+              if ((strcmp(name, "zone_12") == 0) && (this->switchzone12sensor != nullptr))
               {
-                this->switchzone10sensor->publish_state(v);
+                this->switchzone12sensor->publish_state(v);
               }
             }
           }
@@ -236,6 +239,7 @@ namespace esphome
         sprintf(sendMessage, "{\"msgType\":1,\"component_type\":2, \"component_id\":%d, \"component_value\":%d}\n", component_id, status);
         this->write_str(sendMessage);
         this->flush();
+        ESP_LOGD(TAG, "sendMessage=%s", sendMessage);
       }
     }
     void FloorheatingComponent::update()

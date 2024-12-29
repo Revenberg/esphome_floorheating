@@ -149,7 +149,9 @@ for(var i=1; i<=tempcount; i++) {
 void updateConfig(String inputParam, String inputMessage) {
   Serial.println(inputParam);
   Serial.println(inputMessage);
-  serializeJson(doc, Serial);
+  Serial.print("inputMessage: "); 
+  serializeJson(doc, Serial);        
+  Serial.println();        
 
   if (doc.containsKey(inputParam)) {
     doc[inputParam]["name"] = inputMessage;    
@@ -169,7 +171,7 @@ void updateConfig(String inputParam, String inputMessage) {
   });
 
   adminserver.on("/firmware", HTTP_GET, [](AsyncWebServerRequest* request) {
-    removeConfig();
+    removeConfig();    
   });
 
   adminserver.on("/refresh", HTTP_GET, [](AsyncWebServerRequest* request) {
